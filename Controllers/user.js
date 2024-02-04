@@ -1,6 +1,11 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userModel = require('../Models/user');
+
+const authentication = (userId) =>{
+    return jwt.sign({userId: userId},"strongpassword");
+}
 
 exports.signUp = async(req,res,next) =>{
     try{
@@ -61,7 +66,7 @@ exports.login = (req,res) =>{
                     if(result == false){
                         res.status(401).json({success: false,message: "User password incorrect"});
                     }else{
-                        res.status(200).json({success: true,message: "User loggedIn successfully"});
+                        res.status(200).json({success: true,message: "User loggedIn successfully",token: authentication(userData._id)});
                     }
                })
 

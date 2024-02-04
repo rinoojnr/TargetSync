@@ -15,6 +15,12 @@ const todoPersonSchema = new Schema({
     subtitle: {
         type: String,
         required: true
+    },
+    createdAt: {
+        type: Date
+    },
+    expiredAt: {
+        type: Date
     }
 });
 
