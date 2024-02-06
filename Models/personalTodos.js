@@ -16,6 +16,10 @@ const todoPersonSchema = new Schema({
         type: String,
         required: true
     },
+    isCompleted: {
+        type: Boolean,
+        required: true
+    },
     createdAt: {
         type: Date
     },

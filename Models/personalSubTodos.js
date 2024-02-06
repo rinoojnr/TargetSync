@@ -8,6 +8,10 @@ const subTodoSchema = new Schema({
         ref: 'Personaltodos',
         required: true
     },
+    isCompleted: {
+        type: String,
+        required: true
+    },
     todos: {
         type: String
     }

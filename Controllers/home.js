@@ -7,10 +7,8 @@ exports.home = (req,res) =>{
 }
 exports.getTodo = async(req,res) =>{
     try{
-        console.log(req.user)
-        const todoHeader = await PersonaltodosModel.find({userId: req.user._id}).select('title subtitle expiredAt -_id');
-        console.log(todoHeader)
-        res.json(todoHeader)
+        let todoHeader = await PersonaltodosModel.find({userId: req.user._id}).select('title subtitle isCompleted expiredAt _id');
+        res.json({todoHeader: todoHeader})
     }catch(err){
         res.status(400).json({sucess: false,status: "Todo fetching failed",message: err.message});
     }
@@ -21,7 +19,7 @@ exports.forPerson = async(req,res,next) =>{
         if(!title || !subtitle){
             throw new Error("Plese fill the detailes")
         }
-        PersonaltodosModel.create({userId: req.user._id,title: title,subtitle: subtitle,createdAt: new Date(),expiredAt: new Date(expiredAt)})
+        PersonaltodosModel.create({userId: req.user._id,title: title,subtitle: subtitle,isCompleted: false,createdAt: new Date(),expiredAt: new Date(expiredAt)})
         .then(()=>{
             res.status(200).json({sucess: true,status: "Created",message: "New todo created"});
         })
@@ -35,7 +33,7 @@ exports.forPerson = async(req,res,next) =>{
 exports.forPersonSubtodos = async(req,res) =>{
     try{
         const {personalId,todos} = req.body;
-        PersonalSubtodosModel.create({personalId: personalId,todos: todos})
+        PersonalSubtodosModel.create({personalId: personalId,isCompleted: false,todos: todos})
         .then(()=>{
             res.status(200).json({sucess: true,status: "Created",message: "New subtodo created"});
         })
