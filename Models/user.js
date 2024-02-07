@@ -20,6 +20,16 @@ const userSchema = new Schema({
     userpassword: {
         type: String,
         required: true
+    },
+    completed: {
+        type: Number,
+        require: true,
+        default: 0
+    },
+    totaltasks: {
+        type: Number,
+        required: true,
+        default: 0
     }
 });
 
