@@ -65,7 +65,14 @@ exports.deleteTodos = (req,res) =>{
             if(deleteStatus.deletedCount === 0){
                 throw new Error("The item already deleted");
             }
-            res.status(200).json({success: true,status: "deleted",message: "The item is deleted"});
+            User.findById(req.user._id)
+            .then((result)=>{
+                result.totaltasks-=1;
+                return result.save();
+            })
+            .then(()=>{
+                res.status(200).json({success: true,status: "deleted",message: "The item is deleted"});
+            })
         })
         .catch((err)=>{
             res.status(401).json({success: false,staus: "not deleted",message: err.message})
