@@ -58,21 +58,31 @@ exports.forPersonSubtodos = async(req,res) =>{
     }
 }
 
-exports.deleteTodos = (req,res) =>{
+exports.deleteTodos = async(req,res) =>{
     try{
-        PersonaltodosModel.deleteOne({_id: req.params.id})
+        PersonaltodosModel.findOneAndDelete({_id: req.params.id})
         .then((deleteStatus)=>{
-            if(deleteStatus.deletedCount === 0){
-                throw new Error("The item already deleted");
+            if(deleteStatus.isCompleted){
+                User.findById(req.user._id)
+                .then((result)=>{
+                    result.completed-=1;
+                    result.totaltasks-=1;
+                    return result.save();
+                })
+                .then(()=>{
+                    res.status(200).json({success: true,status: "deleted",message: "The item is deleted"});
+                })
+            }else{
+                User.findById(req.user._id)
+                .then((result)=>{
+                    result.totaltasks-=1;
+                    return result.save();
+                })
+                .then(()=>{
+                    res.status(200).json({success: true,status: "deleted",message: "The item is deleted"});
+                })
             }
-            User.findById(req.user._id)
-            .then((result)=>{
-                result.totaltasks-=1;
-                return result.save();
-            })
-            .then(()=>{
-                res.status(200).json({success: true,status: "deleted",message: "The item is deleted"});
-            })
+            
         })
         .catch((err)=>{
             res.status(401).json({success: false,staus: "not deleted",message: err.message})
@@ -104,6 +114,22 @@ exports.isCompleted =  (req,res) =>{
     }catch(err){
         res.status(400).json({success: false,status: "not updated",message: err.message});
     }
+}
+
+
+exports.buyPremium = (req,res) =>{
+    User.findById({_id: req.user._id})
+    .then((result)=>{
+        if(!result.isPremium){
+            result.isPremium = true;
+            result.save();
+        }else{
+            throw new Error ("You are already a premium member");
+        }
+    })
+    .catch((err)=>{
+        res.status(401).json({success: false,message: err.message})
+    })
 }
 
 

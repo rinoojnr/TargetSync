@@ -30,6 +30,11 @@ const userSchema = new Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    isPremium: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 });
 
